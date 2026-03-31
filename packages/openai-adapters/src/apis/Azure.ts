@@ -8,6 +8,7 @@ import { z } from "zod";
 import { AzureConfigSchema } from "../types.js";
 import { customFetch } from "../util.js";
 import { OpenAIApi } from "./OpenAI.js";
+import { isResponsesModel } from "./openaiResponses.js";
 
 export class AzureApi extends OpenAIApi {
   constructor(private azureConfig: z.infer<typeof AzureConfigSchema>) {
@@ -115,10 +116,21 @@ export class AzureApi extends OpenAIApi {
     return modifiedBody;
   }
 
+  protected shouldUseResponsesEndpoint(model: string): boolean {
+    return isResponsesModel(model);
+  }
+
   async *chatCompletionStream(
     body: ChatCompletionCreateParamsStreaming,
     signal: AbortSignal,
   ): AsyncGenerator<ChatCompletionChunk, any, unknown> {
+    if (this.shouldUseResponsesEndpoint(body.model)) {
+      for await (const chunk of super.chatCompletionStream(body, signal)) {
+        yield chunk;
+      }
+      return;
+    }
+
     const response = await this.openai.chat.completions.create(
       this.modifyChatBody(body),
       { signal },

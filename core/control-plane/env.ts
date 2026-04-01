@@ -100,6 +100,9 @@ export function getControlPlaneEnvSync(
 export async function useHub(
   ideSettingsPromise: Promise<IdeSettings>,
 ): Promise<boolean> {
+  if (process.env.CONTINUE_DISABLE_HUB === "true") {
+    return false;
+  }
   const ideSettings = await ideSettingsPromise;
   return ideSettings.continueTestEnvironment !== "none";
 }

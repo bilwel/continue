@@ -323,7 +323,13 @@ class OpenAI extends BaseLLM {
     // Specialized conversion for Responses API (strongly typed body)
     const model = options.model;
 
-    const input = toResponsesInput(messages);
+    // Avoid replaying prior-turn reasoning items (`type: "reasoning"`) in input.
+    // Some providers reject these with errors like:
+    // "Item 'rs_...' of type 'reasoning' was provided without its required following item."
+    // We still keep reasoning enabled for *new* generation below.
+    const input = toResponsesInput(messages).filter(
+      (item: any) => item?.type !== "reasoning",
+    );
 
     const body: ResponseCreateParamsBase = {
       model,

@@ -300,6 +300,7 @@ export class ConfigHandler {
     org: OrganizationDescription,
     profiles: ProfileLifecycleManager[],
   ): Promise<OrgWithProfiles> {
+    const forceLocalProfile = process.env.CONTINUE_FORCE_LOCAL_PROFILE === "true";
     const profileKey = await this.getProfileKey(org.id);
     const selectedProfiles =
       this.globalContext.get("lastSelectedProfileForWorkspace") ?? {};
@@ -313,7 +314,12 @@ export class ConfigHandler {
       firstNonLocal ?? (profiles.length > 0 ? profiles[0] : null);
 
     let currentProfile: ProfileLifecycleManager | null;
-    if (currentSelection) {
+    if (forceLocalProfile) {
+      currentProfile =
+        profiles.find(
+          (profile) => profile.profileDescription.profileType === "local",
+        ) ?? fallback;
+    } else if (currentSelection) {
       const match = profiles.find(
         (profile) => profile.profileDescription.id === currentSelection,
       );

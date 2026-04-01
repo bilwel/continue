@@ -23,6 +23,7 @@
         // "CONTROL_PLANE_ENV": "local",
         "CONTINUE_TEST_ENV": "none",
         "CONTINUE_DISABLE_HUB": "true",
+        "CONTINUE_FORCE_LOCAL_PROFILE": "true",
         "CONTINUE_GLOBAL_DIR": "${workspaceFolder}/extensions/.continue-debug"
         // "staging" for the preview deployment	        "CONTINUE_GLOBAL_DIR": "${workspaceFolder}/extensions/.continue-debug"
         // "local" for entirely local development of control plane/proxy

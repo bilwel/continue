@@ -77,7 +77,7 @@ describe("AzureApi responses routing", () => {
     expect(response.choices[0].message.content).toBe("Hello from responses");
   });
 
-  it("uses responses for Azure Foundry gpt-5-codex stream", async () => {
+  it("uses chat/completions for Azure Foundry gpt-5-codex stream", async () => {
     const api = createAzureApi("azure-foundry");
 
     const responsesSpy = vi
@@ -98,7 +98,25 @@ describe("AzureApi responses routing", () => {
         } as any;
       });
 
-    const chatCompletionsSpy = vi.spyOn(api.openai.chat.completions, "create");
+    const chatCompletionsSpy = vi
+      .spyOn(api.openai.chat.completions, "create")
+      .mockResolvedValue(
+        (async function* () {
+          yield {
+            id: "chatcmpl-1",
+            object: "chat.completion.chunk",
+            created: 1710000001,
+            model: "gpt-5-codex",
+            choices: [
+              {
+                index: 0,
+                delta: { role: "assistant", content: "hello" },
+                finish_reason: null,
+              },
+            ],
+          };
+        })() as any,
+      );
 
     const chunks: any[] = [];
     for await (const chunk of api.chatCompletionStream(
@@ -112,8 +130,8 @@ describe("AzureApi responses routing", () => {
       chunks.push(chunk);
     }
 
-    expect(responsesSpy).toHaveBeenCalledTimes(1);
-    expect(chatCompletionsSpy).not.toHaveBeenCalled();
+    expect(responsesSpy).not.toHaveBeenCalled();
+    expect(chatCompletionsSpy).toHaveBeenCalledTimes(1);
     expect(chunks).toHaveLength(1);
     expect(chunks[0].choices[0].delta.content).toBe("hello");
   });

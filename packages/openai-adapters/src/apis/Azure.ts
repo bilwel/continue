@@ -117,6 +117,11 @@ export class AzureApi extends OpenAIApi {
   }
 
   protected shouldUseResponsesEndpoint(model: string): boolean {
+    // Azure Foundry frequently exposes chat/completions on /models while
+    // responses may be unsupported, so keep Azure OpenAI behavior only.
+    if (this.azureConfig.env?.apiType === "azure-foundry") {
+      return false;
+    }
     return isResponsesModel(model);
   }
 

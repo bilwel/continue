@@ -579,12 +579,7 @@ class OpenAI extends BaseLLM {
     signal: AbortSignal,
     options: CompletionOptions,
   ): AsyncGenerator<ChatMessage> {
-    // Azure Foundry's /models endpoint may not support the Responses route
-    // for all deployments. Fall back to chat/completions in that case.
-    if (
-      !this.isOSeriesOrGpt5Model(options.model) ||
-      this.apiType === "azure-foundry"
-    ) {
+    if (!this.isOSeriesOrGpt5Model(options.model)) {
       return;
     }
 
@@ -635,10 +630,7 @@ class OpenAI extends BaseLLM {
     signal: AbortSignal,
     options: CompletionOptions,
   ): Promise<ChatMessage | ChatMessage[]> {
-    if (
-      !this.isOSeriesOrGpt5Model(options.model) ||
-      this.apiType === "azure-foundry"
-    ) {
+    if (!this.isOSeriesOrGpt5Model(options.model)) {
       // Minimal draft: only handle supported models for now
       return { role: "assistant", content: "" };
     }

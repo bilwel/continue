@@ -682,10 +682,6 @@ class VsCodeIde implements IDE {
       "remoteConfigServerUrl",
       undefined,
     );
-    const continueTestEnvironment =
-      (process.env.CONTINUE_TEST_ENV as
-        | IdeSettings["continueTestEnvironment"]
-        | undefined) ?? "production";
     const ideSettings: IdeSettings = {
       remoteConfigServerUrl,
       remoteConfigSyncPeriod: settings.get<number>(
@@ -693,7 +689,7 @@ class VsCodeIde implements IDE {
         60,
       ),
       userToken: settings.get<string>("userToken", ""),
-      continueTestEnvironment,
+      continueTestEnvironment: "production",
       pauseCodebaseIndexOnStart: settings.get<boolean>(
         "pauseCodebaseIndexOnStart",
         false,

@@ -169,6 +169,7 @@
                     "group": "More Providers",
                     "pages": [
                       "customize/model-providers/more/asksage",
+                      "customize/model-providers/more/clawrouter",
                       "customize/model-providers/more/deepseek",
                       "customize/model-providers/more/deepinfra",
                       "customize/model-providers/more/groq",
@@ -179,6 +180,7 @@
                       "customize/model-providers/more/moonshot",
                       "customize/model-providers/more/nous",
                       "customize/model-providers/more/nvidia",
+                      "customize/model-providers/more/tensorix",
                       "customize/model-providers/more/together",
                       "customize/model-providers/more/xAI",
                       "customize/model-providers/more/zai"

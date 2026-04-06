@@ -122,7 +122,6 @@ export const providers: Partial<Record<string, ProviderInfo>> = {
       models.cometapiGemini25Pro,
       models.cometapiGemini25Flash,
       models.cometapiGemini25FlashLite,
-      models.cometapiGemini20Flash,
       // xAI Grok family
       models.cometapiGrok40709,
       models.cometapiGrok3,
@@ -565,7 +564,6 @@ Select the \`GPT-4o\` model below to complete your provider configuration, but n
       },
     ],
     packages: [
-      models.llama31405bChat,
       models.llama3170bChat,
       models.llama318bChat,
       { ...models.mixtralTrial, title: "Mixtral" },
@@ -578,6 +576,38 @@ Select the \`GPT-4o\` model below to complete your provider configuration, but n
       },
     ],
     apiKeyUrl: "https://console.groq.com/keys",
+  },
+  minimax: {
+    title: "MiniMax",
+    provider: "minimax",
+    description:
+      "MiniMax offers high-performance models with 200K+ context windows at competitive pricing.",
+    longDescription:
+      "To get started with MiniMax, obtain an API key from the [MiniMax Platform](https://platform.minimax.io).",
+    tags: [ModelProviderTags.RequiresApiKey],
+    collectInputFor: [
+      {
+        inputType: "text",
+        key: "apiKey",
+        label: "API Key",
+        placeholder: "Enter your MiniMax API key",
+        required: true,
+      },
+    ],
+    packages: [
+      models.minimaxM27,
+      models.minimaxM27Highspeed,
+      models.minimaxM25,
+      models.minimaxM25Highspeed,
+      {
+        ...models.AUTODETECT,
+        params: {
+          ...models.AUTODETECT.params,
+          title: "MiniMax",
+        },
+      },
+    ],
+    apiKeyUrl: "https://platform.minimax.io",
   },
   deepseek: {
     title: "DeepSeek",
@@ -721,8 +751,9 @@ Select the \`GPT-4o\` model below to complete your provider configuration, but n
       },
     ],
     packages: [
-      models.gemini3ProPreview,
+      models.gemini31ProPreview,
       models.gemini3FlashPreview,
+      models.gemini31FlashLitePreview,
       models.gemini25Pro,
       models.gemini25Flash,
       models.gemini25FlashLite,
@@ -1119,7 +1150,6 @@ To get started, [register](https://dataplatform.cloud.ibm.com/registration/stepo
       models.asksageclaude45sonnetgov,
       models.asksageclaude45opus,
       models.asksageclaude45haiku,
-      models.asksagegemini20Flash,
       models.asksagegemini25Pro,
       models.asksagegemini25flash,
       models.asksagegpt5,
@@ -1218,6 +1248,26 @@ To get started, [register](https://dataplatform.cloud.ibm.com/registration/stepo
     ],
     apiKeyUrl: "https://cloud.siliconflow.cn/account/ak",
   },
+  tensorix: {
+    title: "Tensorix",
+    provider: "tensorix",
+    description:
+      "Tensorix is an OpenAI-compatible API gateway with access to DeepSeek, Llama, Qwen, GLM, and more.",
+    longDescription:
+      "To get started with Tensorix, create an account and get an API key at [app.tensorix.ai](https://app.tensorix.ai).",
+    tags: [ModelProviderTags.RequiresApiKey, ModelProviderTags.OpenSource],
+    collectInputFor: [
+      {
+        inputType: "text",
+        key: "apiKey",
+        label: "API Key",
+        placeholder: "Enter your Tensorix API key",
+        required: true,
+      },
+    ],
+    packages: [{ ...models.AUTODETECT }],
+    apiKeyUrl: "https://app.tensorix.ai",
+  },
   venice: {
     title: "Venice",
     provider: "venice",
@@ -1261,6 +1311,50 @@ To get started, [register](https://dataplatform.cloud.ibm.com/registration/stepo
       },
     ],
     apiKeyUrl: "https://api.router.tetrate.ai/",
+  },
+  clawrouter: {
+    title: "ClawRouter",
+    provider: "clawrouter",
+    refPage: "clawrouter",
+    description:
+      "Open-source LLM router that automatically selects the cheapest capable model for each request",
+    longDescription: `[ClawRouter](https://github.com/BlockRunAI/ClawRouter) is an open-source LLM router that automatically selects the cheapest capable model for each request based on prompt complexity. It provides 78-96% cost savings on blended inference costs.
+
+To get started:
+1. Install ClawRouter: \`npx clawrouter\`
+2. The router runs locally at \`http://localhost:1337\`
+3. A wallet is auto-generated on first run
+4. Select a model preset below
+
+**Payment Options:**
+- \`blockrun/free\` — No payment required (free-tier models)
+- \`blockrun/eco\` — Economy tier (fund wallet with USDC)
+- \`blockrun/auto\` — Full routing (fund wallet with USDC)
+
+Fund your wallet with USDC on Solana or Base. ClawRouter uses x402 micropayments for seamless pay-per-use.`,
+    icon: "clawrouter.png",
+    tags: [ModelProviderTags.Local, ModelProviderTags.OpenSource],
+    packages: [
+      models.clawrouterAuto,
+      models.clawrouterFree,
+      models.clawrouterEco,
+      models.clawrouterPremium,
+      {
+        ...models.AUTODETECT,
+        params: {
+          ...models.AUTODETECT.params,
+          title: "ClawRouter",
+        },
+      },
+    ],
+    collectInputFor: [
+      {
+        ...apiBaseInput,
+        defaultValue: "http://localhost:1337/v1/",
+      },
+      ...completionParamsInputsConfigs,
+    ],
+    downloadUrl: "https://github.com/BlockRunAI/ClawRouter",
   },
   nous: {
     title: "Nous Research",

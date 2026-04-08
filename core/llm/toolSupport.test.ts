@@ -104,6 +104,11 @@ describe("PROVIDER_TOOL_SUPPORT", () => {
       expect(supportsFn("o3-preview")).toBe(true);
     });
 
+    it("should return true for deployment-style model aliases", () => {
+      expect(supportsFn("mms-gpt-5.2-codex")).toBe(true);
+      expect(supportsFn("team/gpt-4.1-deployment")).toBe(true);
+    });
+
     it("should return true for Gemma models", () => {
       expect(supportsFn("gemma")).toBe(true);
       expect(supportsFn("gemma3")).toBe(true);
@@ -112,12 +117,34 @@ describe("PROVIDER_TOOL_SUPPORT", () => {
     it("should return undefined for unsupported models", () => {
       expect(supportsFn("gpt-3.5-turbo")).toBe(false);
       expect(supportsFn("davinci")).toBe(false);
+      expect(supportsFn("mms-gpt-custom")).toBe(false);
     });
 
     it("should handle case insensitivity", () => {
       expect(supportsFn("GPT-4-turbo")).toBe(true);
       expect(supportsFn("O3-preview")).toBe(true);
       expect(supportsFn("Gemma3")).toBe(true);
+    });
+  });
+
+  describe("azure", () => {
+    const supportsFn = PROVIDER_TOOL_SUPPORT["azure"];
+
+    it("should return true for GPT and O-series models", () => {
+      expect(supportsFn("gpt-4")).toBe(true);
+      expect(supportsFn("gpt-5")).toBe(true);
+      expect(supportsFn("o3-mini")).toBe(true);
+    });
+
+    it("should return true for deployment-style model aliases", () => {
+      expect(supportsFn("mms-gpt-5.2-codex")).toBe(true);
+      expect(supportsFn("prod-o3-deployment")).toBe(true);
+    });
+
+    it("should return false for unsupported models", () => {
+      expect(supportsFn("gpt-3.5-turbo")).toBe(false);
+      expect(supportsFn("mms-gpt-custom")).toBe(false);
+      expect(supportsFn("phi-4")).toBe(false);
     });
   });
 

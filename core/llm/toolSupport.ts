@@ -1,6 +1,23 @@
 import { parseProxyModelName } from "@continuedev/config-yaml";
 import { ModelDescription } from "..";
 
+function matchesOpenAIToolModelName(lowerModel: string): boolean {
+  // Support canonical model IDs and deployment-style aliases (e.g.
+  // "mms-gpt-5.2-codex") while avoiding broad false positives.
+  return (
+    lowerModel.startsWith("gpt-4") ||
+    lowerModel.startsWith("gpt-5") ||
+    lowerModel.startsWith("gpt-4.1") ||
+    lowerModel.startsWith("o1") ||
+    lowerModel.startsWith("o3") ||
+    lowerModel.startsWith("o4") ||
+    lowerModel.startsWith("codex") ||
+    /(^|[-_/])gpt-(4(?:\.1)?|5(?:\.\d+)?)(?=$|[-_.:/])/.test(lowerModel) ||
+    /(^|[-_/])o[134](?=$|[-_.:/])/.test(lowerModel) ||
+    /(^|[-_/])codex(?=$|[-_.:/])/.test(lowerModel)
+  );
+}
+
 export const PROVIDER_TOOL_SUPPORT: Record<string, (model: string) => boolean> =
   {
     "continue-proxy": (model) => {
@@ -29,29 +46,12 @@ export const PROVIDER_TOOL_SUPPORT: Record<string, (model: string) => boolean> =
     },
     azure: (model) => {
       const lower = model.toLowerCase();
-      if (
-        lower.startsWith("gpt-4") ||
-        lower.startsWith("gpt-5") ||
-        lower.startsWith("gpt-4.1") ||
-        lower.startsWith("o1") ||
-        lower.startsWith("o3") ||
-        lower.startsWith("o4")
-      )
-        return true;
-      return false;
+      return matchesOpenAIToolModelName(lower);
     },
     openai: (model) => {
       const lower = model.toLowerCase();
       // https://platform.openai.com/docs/guides/function-calling#models-supporting-function-calling
-      if (
-        lower.startsWith("gpt-4") ||
-        lower.startsWith("gpt-5") ||
-        lower.startsWith("o1") ||
-        lower.startsWith("o3") ||
-        lower.startsWith("o4") ||
-        lower.startsWith("codex") ||
-        lower.startsWith("gpt-4.1")
-      ) {
+      if (matchesOpenAIToolModelName(lower)) {
         return true;
       }
 

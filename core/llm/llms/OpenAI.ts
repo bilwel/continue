@@ -326,10 +326,23 @@ class OpenAI extends BaseLLM {
     // Avoid replaying prior-turn reasoning items (`type: "reasoning"`) in input.
     // Some providers reject these with errors like:
     // "Item 'rs_...' of type 'reasoning' was provided without its required following item."
+    //
+    // When removing reasoning items, strip dependent output item IDs from
+    // function_call/message items as well, otherwise providers can return:
+    // "Item 'fc_...' ... was provided without its required 'reasoning' item."
     // We still keep reasoning enabled for *new* generation below.
-    const input = toResponsesInput(messages).filter(
-      (item: any) => item?.type !== "reasoning",
-    );
+    const rawInput = toResponsesInput(messages);
+    const removedReasoning = rawInput.some((item: any) => item?.type === "reasoning");
+    let input = rawInput.filter((item: any) => item?.type !== "reasoning");
+    if (removedReasoning) {
+      input = input.map((item: any) => {
+        if (item?.type === "function_call" || item?.type === "message") {
+          const { id: _id, ...rest } = item;
+          return rest;
+        }
+        return item;
+      });
+    }
 
     const body: ResponseCreateParamsBase = {
       model,

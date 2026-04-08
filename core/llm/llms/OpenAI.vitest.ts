@@ -134,6 +134,55 @@ describe("OpenAI", () => {
     vi.clearAllMocks();
   });
 
+  test("should strip dependent function_call/message ids when reasoning input is removed", () => {
+    const openai = new OpenAI({
+      apiKey: "test-api-key",
+      model: "gpt-5.2-codex",
+      apiBase: "https://api.openai.com/v1/",
+    });
+
+    const messages: any[] = [
+      {
+        role: "thinking",
+        content: "thinking",
+        reasoning_details: [
+          { type: "reasoning_id", id: "rs_001" },
+          { type: "encrypted_content", data: "encrypted" },
+        ],
+        metadata: { reasoningId: "rs_001" },
+      },
+      {
+        role: "assistant",
+        content: "",
+        toolCalls: [
+          {
+            id: "call_001",
+            type: "function",
+            function: { name: "read_file", arguments: "{}" },
+          },
+        ],
+        metadata: { responsesOutputItemIds: ["fc_001", "msg_001"] },
+      },
+    ];
+
+    const body = (openai as any)._convertArgsResponses(
+      { model: "gpt-5.2-codex" },
+      messages,
+    );
+
+    const functionCall = body.input.find((i: any) => i.type === "function_call");
+    expect(functionCall).toBeDefined();
+    expect(functionCall.id).toBeUndefined();
+
+    const messageItem = body.input.find((i: any) => i.type === "message");
+    if (messageItem) {
+      expect(messageItem.id).toBeUndefined();
+    }
+
+    const reasoningItem = body.input.find((i: any) => i.type === "reasoning");
+    expect(reasoningItem).toBeUndefined();
+  });
+
   test("streamChat should send a valid request", async () => {
     const openai = new OpenAI({
       apiKey: "test-api-key",

@@ -84,7 +84,7 @@
       }
     ],
     "configuration": {
-      "title": "Continue",
+      "title": "Continue (Fork)",
       "properties": {
         "continue.telemetryEnabled": {
           "type": "boolean",
@@ -606,7 +606,7 @@
       "activitybar": [
         {
           "id": "continue",
-          "title": "Continue",
+          "title": "Continue (Fork)",
           "icon": "media/sidebar-icon.png"
         }
       ],
@@ -623,7 +623,7 @@
         {
           "type": "webview",
           "id": "continue.continueGUIView",
-          "name": "Continue",
+          "name": "Continue (Fork)",
           "icon": "media/sidebar-icon.png",
           "visibility": "visible"
         }
